@@ -128,6 +128,20 @@ def init_state():
     ss.setdefault("co_type", ORDER_TYPES[0])
     ss.setdefault("co_tip", "10%")
     ss.setdefault("co_method", PAY_METHODS[0])
+    ss.setdefault("cart_open", False)     # mobile cart bottom sheet
+
+
+def open_cart():
+    st.session_state.cart_open = True
+
+
+def close_cart():
+    st.session_state.cart_open = False
+
+
+def go_checkout():
+    st.session_state.cart_open = False
+    st.session_state.stage = "checkout"
 
 
 def toggle(key: str, value: str):
@@ -187,6 +201,7 @@ def finish_payment():
 
 
 def new_order():
+    st.session_state.cart_open = False
     st.session_state.cart = {}
     st.session_state.stage = "browse"
     st.session_state.celebrate = False
@@ -333,8 +348,13 @@ h1, h2, h3, h4 { font-family: 'Fraunces', serif !important; color: @@ESP@@; lett
 [data-testid="stColumn"]:has([class*="st-key-cart_panel"]) { position: sticky; top: 1.2rem; align-self: flex-start; }
 [class*="st-key-cart_panel"], [class*="st-key-panel_"] {
     background: @@CHAMP@@; border: 1.5px solid @@PASTEL@@; border-radius: 22px; padding: 1.3rem 1.2rem 1.4rem;
-    gap: .55rem !important; animation: fadeUp .7s cubic-bezier(.2,.7,.3,1) backwards;
+    gap: .55rem !important; animation: fadeUp .7s cubic-bezier(.2,.7,.3,1) backwards; position: relative;
 }
+/* cart rows stay on one line even on narrow phones (Streamlit would otherwise stack the columns) */
+[class*="st-key-cart_panel"] [data-testid="stHorizontalBlock"] { flex-wrap: nowrap !important; gap: .35rem !important; }
+[class*="st-key-cart_panel"] [data-testid="stColumn"] { min-width: 0 !important; width: auto !important; flex: 1 1 0 !important; }
+[class*="st-key-cart_panel"] [data-testid="stColumn"]:nth-child(5) { flex: 2.2 1 0 !important; }
+.sheet-handle, [class*="st-key-sheet_close"], [class*="st-key-fab_cart"] { display: none; }
 [class*="st-key-panel_summary"] { animation-delay: .12s; }
 .cart-title, .panel-title { font-family: 'Fraunces', serif; font-size: 1.6rem; font-weight: 600; color: @@WM@@; margin-bottom: .2rem; }
 .cart-empty { text-align: center; font-size: .92rem; opacity: .8; padding: .8rem 0 .4rem; }
@@ -446,9 +466,36 @@ h1, h2, h3, h4 { font-family: 'Fraunces', serif !important; color: @@ESP@@; lett
     mask: radial-gradient(circle at 50% 0, transparent 7px, #000 7.5px) 0 0 / 18px 14px repeat-x; }
 
 @media (max-width: 900px) {
-    .block-container { padding: 1.2rem 1rem 3rem; }
-    .brand { font-size: 2.4rem; }
-    [data-testid="stColumn"]:has([class*="st-key-cart_panel"]) { position: static; }
+    .block-container { padding: 1.2rem 1rem 7rem; }
+    .brand { font-size: 2.3rem; }
+    .bag-label { display: none; }
+    .bag { padding: .35rem .4rem; }
+
+    /* floating cart button */
+    [class*="st-key-fab_cart"] { display: block; position: fixed; right: 14px; bottom: 16px; left: auto; width: auto !important;
+        z-index: 9990; animation: popIn .45s cubic-bezier(.2,.7,.3,1); }
+    [class*="st-key-fab_cart"] button { width: auto; border-radius: 999px; padding: .85rem 1.3rem; font-size: .98rem;
+        box-shadow: 0 6px 18px @@WM@@66; animation: payPulse 2.4s ease-out infinite; }
+
+    /* cart becomes a bottom sheet */
+    [data-testid="stColumn"]:has([class*="st-key-cart_panel"]) {
+        position: fixed !important; top: auto !important; left: 0; right: 0; bottom: 0; width: 100% !important; max-width: none;
+        z-index: 9999; max-height: 82vh; overflow-y: auto; background: @@CHAMP@@; border-top: 1.5px solid @@PASTEL@@;
+        border-radius: 24px 24px 0 0; padding-bottom: env(safe-area-inset-bottom);
+        transform: translateY(105%); visibility: hidden;
+        transition: transform .45s cubic-bezier(.2,.7,.3,1), visibility 0s .45s;
+    }
+    [data-testid="stColumn"]:has(.sheet-open) { transform: translateY(0); visibility: visible;
+        transition: transform .45s cubic-bezier(.2,.7,.3,1), visibility 0s; }
+    .stApp:has(.sheet-open)::after { content: ""; position: fixed; inset: 0; background: @@ESP@@55; z-index: 9990; animation: fadeIn .3s; }
+    [class*="st-key-cart_panel"] { background: transparent; border: 0; border-radius: 0; padding: .6rem 1.1rem 1.4rem; animation: none; }
+    .sheet-handle { display: block; width: 44px; height: 5px; border-radius: 3px; background: @@PASTEL@@; margin: 0 auto .5rem; }
+    [class*="st-key-sheet_close"] { display: block; position: absolute; top: 1.1rem; right: 1.1rem; z-index: 2; }
+    [class*="st-key-sheet_close"] [data-testid="stBaseButton-secondary"] { padding: .3rem .85rem; min-height: 0; font-size: .82rem; border-radius: 999px; }
+
+    /* pay button stays reachable on the checkout page */
+    [class*="st-key-bigbtn_pay"] { position: fixed; left: 14px; right: 14px; bottom: 14px; z-index: 9990; }
+    [class*="st-key-bigbtn_pay"] button { box-shadow: 0 6px 18px @@WM@@55; }
 }
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
@@ -548,7 +595,7 @@ def render_masthead(bag_count: int):
         '<div class="masthead"><div class="masthead-row"><div>'
         f'<div class="brand">Ece <em>Cafe</em>{steam}</div>'
         '<div class="tagline">Small-batch coffee, ceremonial matcha &amp; pastries baked each morning.</div></div>'
-        f'<div class="bag">{BAG_SVG}<span>Your bag</span><span class="bag-count {parity(bag_count)}">{bag_count}</span></div>'
+        f'<div class="bag">{BAG_SVG}<span class="bag-label">Your bag</span><span class="bag-count {parity(bag_count)}">{bag_count}</span></div>'
         '</div></div>',
         unsafe_allow_html=True,
     )
@@ -618,6 +665,10 @@ def render_cart(menu: list[dict]):
     qty_total = sum(q for _, q in lines)
 
     with st.container(key="cart_panel"):
+        state = " sheet-open" if st.session_state.cart_open else ""
+        st.markdown(f'<span class="sheet-state{state}"></span><div class="sheet-handle"></div>', unsafe_allow_html=True)
+        with st.container(key="sheet_close"):  # only visible on mobile (bottom sheet)
+            st.button("Close", key="sheet_close_btn", on_click=close_cart)
         st.markdown('<div class="cart-title">Your Order</div>', unsafe_allow_html=True)
 
         if not lines:
@@ -642,8 +693,8 @@ def render_cart(menu: list[dict]):
                     unsafe_allow_html=True)
         st.write("")
         with st.container(key="bigbtn_checkout"):
-            st.button(f"Checkout · {money(subtotal)}", type="primary", on_click=set_value,
-                      args=("stage", "checkout"), use_container_width=True)
+            st.button(f"Checkout · {money(subtotal)}", type="primary", on_click=go_checkout,
+                      use_container_width=True)
 
 
 # ----------------------------------------------------------------------------
@@ -795,6 +846,12 @@ def main():
     elif stage == "checkout":
         render_checkout(menu)
     else:
+        # Mobile: floating cart button (hidden on desktop by CSS) opens the cart as a bottom sheet.
+        lines, subtotal = cart_lines(menu)
+        if lines and not st.session_state.cart_open:
+            with st.container(key="fab_cart"):
+                st.button(f"View cart · {bag_count} · {money(subtotal)}", key="fab_btn", type="primary",
+                          on_click=open_cart)
         main_col, cart_col = st.columns([2.3, 1], gap="large")
         with main_col:
             categories = render_filters(menu)
