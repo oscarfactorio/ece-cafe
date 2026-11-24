@@ -1,1 +1,74 @@
-
+[
+  {
+    "id": "latte-honey-lavender",
+    "name": "Honey Lavender Latte",
+    "category": "Coffee",
+    "special_tags": ["Signature"],
+    "price": 5.50,
+    "description": "Double espresso, steamed milk and a house-made lavender honey syrup.",
+    "image": "images/honey-lavender-latte.jpg"
+  },
+  {
+    "id": "cold-brew-vanilla",
+    "name": "Vanilla Bean Cold Brew",
+    "category": "Coffee",
+    "special_tags": ["Iced", "Vegan"],
+    "price": 4.75,
+    "description": "Twelve-hour steeped cold brew over ice with real vanilla bean and oat cream.",
+    "image": "images/cold-brew.jpg"
+  },
+  {
+    "id": "flat-white",
+    "name": "Flat White",
+    "category": "Coffee",
+    "special_tags": [],
+    "price": 4.25,
+    "description": "Velvety microfoam over a ristretto double shot. Simple and balanced.",
+    "image": "images/flat-white.jpg"
+  },
+  {
+    "id": "ceremonial-matcha",
+    "name": "Ceremonial Matcha Latte",
+    "category": "Matcha & Tea",
+    "special_tags": ["Signature", "Vegan"],
+    "price": 6.00,
+    "description": "Stone-ground Uji matcha whisked to order with your choice of oat or whole milk.",
+    "image": "images/matcha-latte.jpg"
+  },
+  {
+    "id": "strawberry-matcha",
+    "name": "Strawberry Matcha Cloud",
+    "category": "Matcha & Tea",
+    "special_tags": ["Iced", "Seasonal"],
+    "price": 6.75,
+    "description": "Macerated strawberries, iced matcha and a float of vanilla cream.",
+    "image": "images/strawberry-matcha.jpg"
+  },
+  {
+    "id": "rose-earl-grey",
+    "name": "Rose Earl Grey",
+    "category": "Matcha & Tea",
+    "special_tags": ["Vegan"],
+    "price": 4.00,
+    "description": "Loose-leaf bergamot black tea with dried rose petals, served by the pot.",
+    "image": "images/rose-earl-grey.jpg"
+  },
+  {
+    "id": "almond-croissant",
+    "name": "Almond Croissant",
+    "category": "Pastries",
+    "special_tags": ["Signature"],
+    "price": 4.50,
+    "description": "Twice-baked, filled with frangipane and finished with toasted almonds.",
+    "image": "images/almond-croissant.jpg"
+  },
+  {
+    "id": "pistachio-financier",
+    "name": "Pistachio Financier",
+    "category": "Pastries",
+    "special_tags": ["Gluten-Free", "Seasonal"],
+    "price": 3.75,
+    "description": "Brown-butter almond cake with Sicilian pistachio, naturally gluten-free.",
+    "image": "images/pistachio-financier.jpg"
+  }
+]
