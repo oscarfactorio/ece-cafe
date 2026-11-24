@@ -311,7 +311,7 @@ h1, h2, h3, h4 { font-family: 'Fraunces', serif !important; color: @@ESP@@; lett
 /* ---------- menu cards ---------- */
 [class*="st-key-card_"] {
     background: @@CHAMP@@; border: 1.5px solid @@PASTEL@@; border-radius: 20px; padding: .8rem .8rem 1rem;
-    transition: transform .3s cubic-bezier(.2,.7,.3,1), border-color .3s ease; gap: .6rem !important;
+    transition: transform .3s cubic-bezier(.2,.7,.3,1), border-color .3s ease; gap: 1rem !important; padding-bottom: 1.3rem;
     animation: fadeUp .7s cubic-bezier(.2,.7,.3,1) backwards;
 }
 [data-testid="stColumn"]:nth-child(2) [class*="st-key-card_"] { animation-delay: .1s; }
@@ -324,7 +324,7 @@ h1, h2, h3, h4 { font-family: 'Fraunces', serif !important; color: @@ESP@@; lett
 .card-title { font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.28rem; line-height: 1.2; }
 .price-tag { background: @@LIGHT@@; font-weight: 700; font-size: .9rem; padding: .15rem .6rem; border-radius: 999px; white-space: nowrap; }
 .card-desc { font-size: .88rem; line-height: 1.5; opacity: .85; margin: .35rem 0 .1rem; }
-.chips { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .4rem; }
+.chips { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .6rem; margin-bottom: .5rem; min-height: 1.4rem; }
 .chip { font-size: .68rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
     border: 1.3px solid @@ESP@@55; border-radius: 999px; padding: .08rem .5rem; transition: background .25s, border-color .25s; }
 .chip:hover { background: @@PASTEL@@; border-color: @@ESP@@; }
@@ -740,12 +740,9 @@ def render_success():
     thanks = f"Thank you, {name}!" if name else "Thank you!"
     check = ('<div class="check-wrap"><svg class="check" viewBox="0 0 120 120"><circle class="c-bg" cx="60" cy="60" r="52"/>'
              '<path class="c-tick" d="M36 62l17 17 32-36"/></svg></div>')
-    tracker = ('<div class="track"><div class="t-step done"><span class="dot"></span>Order received</div>'
-               '<div class="t-line"><i></i></div><div class="t-step now"><span class="dot"></span>Brewing</div>'
-               '<div class="t-line"></div><div class="t-step"><span class="dot"></span>Ready</div></div>')
     hero = (f'<div class="hero">{check}<div class="hero-title">Order {r["order_no"]}</div>'
             f'<div class="hero-sub">{thanks} We’re on it.</div>'
-            f'<div class="eta">Ready in about 8 minutes · {html.escape(r["type"])}</div>{tracker}</div>')
+            '<div class="eta">Being prepared · Show your order code to Ece</div></div>')
 
     rows = "".join(
         f'<div class="r-line" style="animation-delay:{0.7 + i * 0.12:.2f}s"><span>{qty} × {html.escape(n)}</span><span>{money(sub)}</span></div>'
@@ -757,7 +754,7 @@ def render_success():
         f'<div class="r-meta">{r["order_no"]} · {html.escape(r["type"])}</div><hr class="cart-divider">'
         f'{rows}{tip_row}<hr class="cart-divider">'
         f'<div class="r-total"><span>Total paid</span><span>{money(r["total"])}</span></div>'
-        f'<div class="r-foot">{html.escape(r["method"])} · Demo payment</div></div><div class="r-edge"></div>')
+        f'<div class="r-foot">Paid with {html.escape(r["method"])}</div></div><div class="r-edge"></div>')
 
     left, right = st.columns([1.15, 1], gap="large")
     with left:
